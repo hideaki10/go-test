@@ -4,38 +4,48 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"log"
 	"os"
+	"os/exec"
 )
 
 var clip string
+var varOut []string
 
 func init() {
-	flag.StringVar(&clip, "clip", "sdsd", "------")
+	flag.StringVar(&clip, "clip", " ", "------")
 	// TODO: フラグをパースする。
 	flag.Parse()
 
 }
 
-func printResult(s string) error {
-	fmt.Println(s)
-	return nil
-}
+func printResult(args []string) {
+	scanner := bufio.NewScanner(os.Stdin)
 
-func run() error {
-	reader := bufio.NewReader(os.Stdin)
-	var err error
-	input, err := reader.ReadString('\n')
-	fmt.Println(input)
-	if err != nil {
-		return err
+	for scanner.Scan() {
+		//fmt.Println(scanner.Text() + ":  " + clip)
+		varOut = append(varOut, scanner.Text())
+
 	}
-	return printResult(input)
+
+	for _, value := range varOut {
+		cmd := exec.Command(args[0], value)
+		stdout, err := cmd.Output()
+
+		if err != nil {
+			fmt.Println("rre")
+			return
+		}
+		fmt.Println(string(stdout))
+
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "dwdw", err)
+	}
+
 }
 
 func main() {
-	err := run()
-	if err != nil {
-		log.Fatal("dsdsa")
-	}
+	args := flag.Args()
+	printResult(args)
 }

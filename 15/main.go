@@ -11,21 +11,29 @@ import (
 //
 func main() {
 	flag.Parse()
-	var input string
+	var input []string
 
 	// read program input
 	if flag.NArg() == 0 {
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Println(reader.)
-		for i := 0; i < 3; i++ {
-
-			var err error
-			input, err = reader.ReadString('\n')
-			if err != nil {
-				log.Fatalln("failed to read input")
-			}
-			fmt.Println(input)
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			input = append(input, scanner.Text())
 		}
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintln(os.Stderr, "reading standard input:", err)
+		}
+		for _, line := range input {
+			fmt.Println(line + " : h")
+		}
+		// reader := bufio.NewReader(os.Stdin)
+		// var err error
+		// for {
+		// 	input, err = reader.ReadString('\n')
+		// 	if err == io.EOF {
+		// 		break
+		// 	}
+		// 	fmt.Println(input)
+		// }
 
 		// from stdin/pipe
 
@@ -34,8 +42,8 @@ func main() {
 		if flag.NArg() > 1 {
 			log.Fatalln("takes at most one input")
 		}
-		input = flag.Arg(0)
+		//input = flag.Arg(0)
 	}
 
-	fmt.Printf("> %s\n", input)
+	//fmt.Printf("> %s\n", input)
 }
